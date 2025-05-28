@@ -2,6 +2,19 @@ import streamlit as st
 import re
 import json
 
+# シンプルなログイン機構
+def login():
+    st.title("ログイン")
+    password = st.text_input("パスワードを入力してください", type="password")
+    if password == st.secrets["auth"]["password"]:
+        st.session_state["authenticated"] = True
+    elif password:
+        st.warning("パスワードが違います")
+
+if "authenticated" not in st.session_state:
+    login()
+    st.stop()
+
 def convert_to_halfwidth(match):
     return match.group(0).translate(str.maketrans(
         "０１２３４５６７８９",
@@ -22,7 +35,7 @@ def apply_rules(text, rules):
             text = re.sub(pattern, convert_to_halfwidth, text)
     return text
 
-st.title("NHKスタイル 校正プロトタイプ")
+st.title("NHKスタイル 校正ツール")
 
 uploaded_file = st.file_uploader("テキストファイルをアップロード", type=["txt"])
 rule_file = "rules.json"
