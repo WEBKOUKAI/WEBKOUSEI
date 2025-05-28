@@ -5,18 +5,22 @@ import json
 # シンプルなログイン機構
 def login():
     st.title("ログイン")
+
     if "authenticated" not in st.session_state:
         st.session_state["authenticated"] = False
 
-    password = st.text_input("パスワードを入力してください", type="password")
-    if st.button("ログイン"):
-        try:
-            if password == st.secrets["auth"]["password"]:
-                st.session_state["authenticated"] = True
-            else:
-                st.warning("パスワードが違います")
-        except KeyError:
-            st.error("Secretsにパスワードが設定されていません")
+    with st.form("login_form"):
+        password = st.text_input("パスワードを入力してください", type="password")
+        submitted = st.form_submit_button("ログイン")
+
+        if submitted:
+            try:
+                if password == st.secrets["auth"]["password"]:
+                    st.session_state["authenticated"] = True
+                else:
+                    st.warning("パスワードが違います")
+            except KeyError:
+                st.error("Secretsにパスワードが設定されていません")
 
 if not st.session_state["authenticated"]:
     login()
